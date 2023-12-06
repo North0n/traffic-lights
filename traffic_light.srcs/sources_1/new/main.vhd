@@ -64,15 +64,15 @@ end component;
 
 component time_generator is
     Generic (N: INTEGER := 8);
-    Port ( 
-        CLK : in STD_LOGIC;
-        INIT : in STD_LOGIC;
-        Q : out STD_LOGIC_VECTOR(N * 4 - 1 downto 0)
-    );
+    Port ( CLK : in STD_LOGIC;
+           INIT : in STD_LOGIC;
+           Q : out STD_LOGIC_VECTOR(N * 4 - 1 downto 0);
+           IS_GREEN : out STD_LOGIC);
 end component;
 
 signal generated_values: STD_LOGIC_VECTOR(31 downto 0);
 signal time_clk: STD_LOGIC;
+signal is_green: STD_LOGIC;
 
 begin
     divider: freq_divider PORT MAP (
@@ -83,7 +83,8 @@ begin
     gen: time_generator PORT MAP (
         CLK => time_clk,
         INIT => INIT,
-        Q => generated_values
+        Q => generated_values,
+        IS_GREEN=>is_green
     );
     
     dis: display port MAP (

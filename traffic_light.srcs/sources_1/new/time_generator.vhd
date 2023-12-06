@@ -35,7 +35,8 @@ entity time_generator is
     Generic (N: INTEGER := 8);
     Port ( CLK : in STD_LOGIC;
            INIT : in STD_LOGIC;
-           Q : out STD_LOGIC_VECTOR(N * 4 - 1 downto 0));
+           Q : out STD_LOGIC_VECTOR(N * 4 - 1 downto 0);
+           IS_GREEN : out STD_LOGIC);
 end time_generator;
 
 architecture Behavioral of time_generator is
@@ -83,16 +84,16 @@ signal init_vec : time_arr := (
     X"0"
   );
   
-signal is_green : std_logic;
+signal qis_green : std_logic;
 signal nis_green: std_logic;
 
 begin
     init_or_reset <= INIT or reset;
-    nis_green <= not is_green;
+    nis_green <= not qis_green;
 
     is_red_process: process(reset)
     begin
-        if (is_green = '0') then
+        if (qis_green = '0') then
             init_vec <= (
                 X"5",
                 X"0",
@@ -118,7 +119,7 @@ begin
     end process;
 
 
-    IS_RED_FF: fdce_1 port map(D=>nis_green, CE=>reset, CLK=>CLK, CLR=>INIT, Q=>is_green);
+    IS_RED_FF: fdce_1 port map(D=>nis_green, CE=>reset, CLK=>CLK, CLR=>INIT, Q=>qis_green);
 
     REGS: FOR J in 0 to N - 1 GENERATE
         REG_J: FDCE port map(D=>sums_q(J), CE=>'1', CLK=>CLK, INIT=>init_or_reset, INIT_VEC=>init_vec(J), Q=>regs_q(J));
@@ -138,4 +139,5 @@ begin
         Q(J * 4 + 3) <= regs_q(J)(3);
     End Generate;
 
+    IS_GREEN <= qis_green;
 end Behavioral;
