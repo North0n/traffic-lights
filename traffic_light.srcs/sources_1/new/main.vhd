@@ -37,7 +37,8 @@ entity main is
         INIT : in STD_LOGIC;
         Seg: out STD_LOGIC_VECTOR(6 downto 0);
         An: out STD_LOGIC_VECTOR(7 downto 0);
-        Dp: out STD_LOGIC
+        Dp: out STD_LOGIC;
+        LD17_Red, LD16_Green: out STD_LOGIC
      );
 end main;
 
@@ -70,6 +71,13 @@ component time_generator is
            IS_GREEN : out STD_LOGIC);
 end component;
 
+component led_switcher is
+    Port ( CLK : in STD_LOGIC;
+           IS_GREEN: in STD_LOGIC;
+           LD17_Red, LD16_Green: out STD_LOGIC
+    );
+end component;
+
 signal generated_values: STD_LOGIC_VECTOR(31 downto 0);
 signal time_clk: STD_LOGIC;
 signal is_green: STD_LOGIC;
@@ -84,7 +92,7 @@ begin
         CLK => time_clk,
         INIT => INIT,
         Q => generated_values,
-        IS_GREEN=>is_green
+        IS_GREEN => is_green
     );
     
     dis: display port MAP (
@@ -93,5 +101,12 @@ begin
         Seg => Seg,
         An => An,
         Dp => Dp
+    );
+    
+    led: led_switcher port MAP (
+        CLK => time_clk,
+        IS_GREEN => is_green,
+        LD17_Red => LD17_Red,
+        LD16_Green => IS_GREEN
     );
 end Behavioral;
