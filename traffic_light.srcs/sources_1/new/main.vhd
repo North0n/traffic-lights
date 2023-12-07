@@ -104,7 +104,7 @@ begin
     );
     
     led: led_switcher port MAP (
-        CLK => time_clk,
+        CLK => CLK,
         IS_GREEN => is_green,
         LD17_Red => LD17_Red,
         LD16_Green => IS_GREEN
